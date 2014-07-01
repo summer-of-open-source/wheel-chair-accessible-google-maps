@@ -7,11 +7,14 @@
 
 	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css">
 	<link rel="stylesheet" href="styles/map.css">
+
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 </head>
 
 <body>
 	<div id="map"></div>
 	<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+	
 	<script>
 	var map = L.map('map').setView([39.9524384, -75.1636757], 13);
 
@@ -29,26 +32,58 @@
 
 	marker.bindPopup("wheelchairs cannot<br>navigate transfers here").openPopup();
 
-	L.geoJson(geojsonFeature).addTo(map);
-	myLayer.addData(geojsonFeature);
+	// L.geoJson(geojsonFeature).addTo(map);
+	// myLayer.addData(geojsonFeature);
 
-	var myLines = [{
-		"type": "LineString",
-		"coordinates": [[39.948716, -75.164498], [39.944095, -75.165424], [39.936191, -75.167141]]
-	}, {
-		"type": "LineString", 
-		"coordinates": [[39.948721, -75.164498], [39.944100, -75.165424], [39.936196, -75.167141]]
-	}];
+	// var myLines = [{
+	// 	"type": "LineString",
+	// 	"coordinates": [[39.948716, -75.164498], [39.944095, -75.165424], [39.936191, -75.167141]]
+	// }, {
+	// 	"type": "LineString", 
+	// 	"coordinates": [[39.948721, -75.164498], [39.944100, -75.165424], [39.936196, -75.167141]]
+	// }];
 
-	var myStyle = {
-		"color": "#ff7800", 
-		"weight": 5, 
-		"opacity": 0.65
-	};
+	// var myStyle = {
+	// 	"color": "#ff7800", 
+	// 	"weight": 5, 
+	// 	"opacity": 0.65
+	// };
 
-	L.geoJson(myLines, {
-		style: myStyle
-	}).addTo(map);
+	// L.geoJson(myLines, {
+	// 	style: myStyle
+	// }).addTo(map);
+
+
+// $.ajax({
+//   url: "stops.txt",
+//   context: document.body
+// }).done(function() {
+//   $( this ).addClass( "done" );
+// });
+
+// $.ajax({
+//     type: "GET",
+//     url: "stops.txt",
+//     dataType: "text",
+//     success: readData(data)
+// })
+var url = "http://localhost:8888/wheelchairtransit/stops.txt"
+var txtFile = new XMLHttpRequest();
+txtFile.open("GET",  url, true);
+txtFile.onreadystatechange = function()
+{
+  if (txtFile.readyState === 4) {  // document is ready to parse.
+    if (txtFile.status === 200) {  // file is found
+      allText = txtFile.responseText; 
+      //lines is an array
+      console.log(allText)
+
+      lines = txtFile.responseText.split("\n");
+      console.log(lines)
+    }
+  }
+}
+txtFile.send(null);
 
 	</script>
 </body>
