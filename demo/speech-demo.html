@@ -12,6 +12,8 @@
 </head>
 
 <body>
+	<h1>Voice over demo</h1>
+	<p>This is the voice over demo page that will speak out the stop for a visually impaired user. Clicking on the marker will not only show the stop but also speak it. This page currently only works in Chrome.</p>
 	<div id="map"></div>
 	<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
 	
@@ -40,7 +42,7 @@
 	};
 
 
-var url = "http://localhost:8888/wheel-chair-accessible-google-maps/demo/rail-stops.txt"
+var url = "rail-stops.txt"
 var txtFile = new XMLHttpRequest();
 txtFile.open("GET",  url, true);
 txtFile.onreadystatechange = function()
