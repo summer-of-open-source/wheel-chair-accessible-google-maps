@@ -88,7 +88,7 @@ MyResponse.prototype.getWheelchairRoute = function( waypoints ) {
                         lng = departureStop.location.lng();
                         self.addXMarker(lat,lng);
 
-                        $('#messages').append('<p>' + departStopName + '<br/> ' 
+                        $('#messages').append('<p id = "bad">' + departStopName + '<br/> ' 
                             + StopStatus.toString( departStatus ) + '</p>');
                         
                         self.getClosestStation( lat, lng );
@@ -101,7 +101,7 @@ MyResponse.prototype.getWheelchairRoute = function( waypoints ) {
                         lng = arrivalStop.location.lng();
                         self.addXMarker( lat,lng );
 
-                        $('#messages').append ('<p>' +  arriveStopName + '<br/> '
+                        $('#messages').append ('<p id= "bad">' +  arriveStopName + '<br/> '
                          + StopStatus.toString( arriveStatus ) + '</p>');
 
                         self.getClosestStation( lat, lng );

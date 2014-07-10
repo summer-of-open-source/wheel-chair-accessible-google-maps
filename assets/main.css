@@ -73,10 +73,14 @@ span .messageHeader {
     color: #fefefe !important;
 }
 
+#messages{
+     cursor: pointer;
+}
+
 #messages p {
     background:rgba(0,0,0,0.5);
     padding: 0.3em;
-     color: #E93C4F;
+    color: #fefefe;
 }
 
 input[type=text]
