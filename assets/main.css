@@ -11,15 +11,6 @@ body {
         margin-bottom: 0em;
     }
 
-    #map-canvas {
-        margin: 0;
-        width: 100%;
-	   height: 100%;
-     	position: absolute;
-    	bottom: 0;   
-    	z-index: -1; 
-    }
-
     #messages {
         background: rgba(0,0,0,0.8);
         color: #fefefe;
@@ -44,15 +35,6 @@ body {
         top: 1em;
     }
 
-    #map-canvas {
-        margin: 0;
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        bottom: 0;   
-        z-index: -1;
-    }
-
     #messages {
         background: rgba(0,0,0,0.8);
         color: #fefefe;
@@ -69,16 +51,26 @@ body {
     }
 }
 
+#map-canvas {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        bottom: 0;   
+        z-index: -1; 
+    }
+
 span .messageHeader {
     color: #fefefe !important;
 }
 
 #messages{
      cursor: pointer;
+     overflow-y: scroll;
 }
 
 #messages p {
-    background:rgba(0,0,0,0.5);
+    background:rgba(233, 60, 79,0.8);
     padding: 0.3em;
     color: #fefefe;
 }

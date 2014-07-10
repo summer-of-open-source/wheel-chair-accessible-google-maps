@@ -4,7 +4,7 @@ directionsDisplay = new google.maps.DirectionsRenderer();
 
 var outages;
 var railStations;
-var showStations= false;
+var showStations= true;
 
 
 function getrailStations() {
@@ -243,9 +243,9 @@ function stationToggle() {
     showStations = !showStations;
 
      if(showStations) {
-       $("#messages").css({opacity: 1.0})
+       $("#messages").css("height", "");
      } else {
-        $("#messages").css({opacity: 0.0})
+        $("#messages").css("height", "1.5em");
      }
 }
 
