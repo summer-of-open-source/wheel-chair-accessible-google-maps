@@ -4,6 +4,7 @@ directionsDisplay = new google.maps.DirectionsRenderer();
 
 var outages;
 var railStations;
+var showStations= false;
 
 
 function getrailStations() {
@@ -83,9 +84,9 @@ MyResponse.prototype.getWheelchairRoute = function( waypoints ) {
                     if( departStatus != StopStatus.ELEVATOR_WORKING && departStatus != null) {
 
                         departureStop = step.transit.departure_stop;
-                        lat = departureStop.location.A;
-                        lng = departureStop.location.k;
-                        self.addXMarker( lng, lat );
+                        lat = departureStop.location.lat();
+                        lng = departureStop.location.lng();
+                        self.addXMarker(lat,lng);
 
                         $('#messages').append('<p>' + departStopName + '<br/> ' 
                             + StopStatus.toString( departStatus ) + '</p>');
@@ -96,9 +97,9 @@ MyResponse.prototype.getWheelchairRoute = function( waypoints ) {
                     if( arriveStatus != StopStatus.ELEVATOR_WORKING && arriveStatus != null) {
 
                         arrivalStop = step.transit.arrival_stop;
-                        lat = arrivalStop.location.A;
-                        lng = arrivalStop.location.k;
-                        self.addXMarker( lng, lat );
+                        lat = arrivalStop.location.lat();
+                        lng = arrivalStop.location.lng();
+                        self.addXMarker( lat,lng );
 
                         $('#messages').append ('<p>' +  arriveStopName + '<br/> '
                          + StopStatus.toString( arriveStatus ) + '</p>');
@@ -237,13 +238,24 @@ function loadMap() {
     map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 }
 
+function stationToggle() {
+    console.log("toggle");
+    showStations = !showStations;
+
+     if(showStations) {
+       $("#messages").css({opacity: 1.0})
+     } else {
+        $("#messages").css({opacity: 0.0})
+     }
+}
+
 function getDirections() {
 
     var startAddress = $('#startAddress').val();
     var endAddress = $('#endAddress').val();
 
     $("#messages").empty();
-    $("#messages").append("<header> Stations with Limited Access: " + "<br></header>");
+    $("#messages").append("<span class='messageHeader'> Stations with Limited Access " + "<br></span>");
 
     console.log( "start address: " + startAddress + " end address: " + endAddress );
 

@@ -23,14 +23,14 @@
 </head>
 <body>
   <header id = "searchRoute">
-        <input id="startAddress" type="text" value="Haddonfield, NJ"/>
-        <input id="endAddress" type="text" value="30th street station phila"/>
+        <input id="startAddress" type="text" value="" placeholder="Enter start address"/>
+        <input id="endAddress" type="text" value="" placeholder="Enter end address"/>
         <input type="submit" name="submit" onClick="return getDirections();"/>
     </header>
 
     <div id='map-canvas'></div>
-    <div id='messages'> 
-        <span class="messageHeader"> Stations with Limited Access: </span>
+    <div id='messages' onclick = "stationToggle()"> 
+        <span class='messageHeader'> Stations with Limited Access </span>
     </div>
 </body>
 </html>
