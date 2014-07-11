@@ -134,7 +134,7 @@ MyResponse.prototype.getClosestStation = function(lat,lng) {
 
 MyResponse.prototype.addXMarker = function(lng,lat) {
     var image = {
-        url: '/assets/redx.png',
+        url: 'assets/redx.png',
     };
 
     var marker = new google.maps.Marker({
