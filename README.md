@@ -1,7 +1,7 @@
 Wheel Chair Accessible Google Maps
 ==================================
 
-http://summer-of-open-source.github.io/wheel-chair-accessible-google-maps/
+http://kongsally.github.io/wheel-chair-accessible-google-maps/
 
 http://nowheelchair.jimsmiley.us
 
