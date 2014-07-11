@@ -1,1 +1,0 @@
-[{"_id":{"stationId":"21532","outageStart":"2014-05-31 16:27:16 UTC"},"duration":41,"isActive":true,"outageEnd":null,"stop_name":"30th St Station","line_code":"MFL"},{"_id":{"stationId":"20967","outageStart":"2014-05-31 15:10:51 UTC"},"duration":118,"isActive":true,"outageEnd":null,"stop_name":"Oregon Station","line_code":"BSS"}]

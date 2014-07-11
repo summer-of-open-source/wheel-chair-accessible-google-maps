@@ -16,10 +16,16 @@ function getrailStations() {
 };
 
 function getOutages() {
-    console.log( 'getting outages' );
-
-    $.getJSON("outages.json", function(json) {
-         outages = json;
+    url = "http://www.corsproxy.com/www.unlockphilly.com/septa/elevator/outages";
+    $.getJSON(url, function(json) {
+        outages = json;
+    }).success( function() {
+        console.debug("successfully retreived elevator outages");
+        console.debug("there are " + outages.length + " elevator outages");
+    }).error( function() {
+        console.warn("unable to retreive station outages from url:");
+        console.warn(url);
+        outages = [];
     });
 };
 
@@ -128,7 +134,7 @@ MyResponse.prototype.getClosestStation = function(lat,lng) {
 
 MyResponse.prototype.addXMarker = function(lng,lat) {
     var image = {
-        url: 'redx.png',
+        url: '/assets/redx.png',
     };
 
     var marker = new google.maps.Marker({
