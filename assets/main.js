@@ -88,7 +88,7 @@ MyResponse.prototype.getWheelchairRoute = function( waypoints ) {
                         lng = departureStop.location.lng();
                         self.addXMarker(lat,lng);
 
-                        $('#messages').append('<p id = "bad">' + departStopName + '<br/> ' 
+                        $('#info').append('<p id = "bad">' + departStopName + '<br/> ' 
                             + StopStatus.toString( departStatus ) + '</p>');
                         
                         self.getClosestStation( lat, lng );
@@ -101,7 +101,7 @@ MyResponse.prototype.getWheelchairRoute = function( waypoints ) {
                         lng = arrivalStop.location.lng();
                         self.addXMarker( lat,lng );
 
-                        $('#messages').append ('<p id= "bad">' +  arriveStopName + '<br/> '
+                        $('#info').append ('<p id= "bad">' +  arriveStopName + '<br/> '
                          + StopStatus.toString( arriveStatus ) + '</p>');
 
                         self.getClosestStation( lat, lng );
@@ -233,7 +233,8 @@ function loadMap() {
     var philadelphia = new google.maps.LatLng(39.9523400,-75.1637900);
     var mapOptions = {
         zoom: 10,
-        center: philadelphia
+        center: philadelphia,
+        disableDefaultUI: true
     };
     map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 }
@@ -242,20 +243,21 @@ function stationToggle() {
     console.log("toggle");
     showStations = !showStations;
 
-     if(showStations) {
+    /* if(showStations) {
        $("#messages").css("height", "");
      } else {
         $("#messages").css("height", "1.5em");
-     }
+     }*/
 }
 
 function getDirections() {
 
     var startAddress = $('#startAddress').val();
     var endAddress = $('#endAddress').val();
+    //$('html, body').animate({scrollTop:$(document).height()}, 'slow');
 
-    $("#messages").empty();
-    $("#messages").append("<span class='messageHeader'> Stations with Limited Access " + "<br></span>");
+    $("#info").empty();
+    $("#info").append("<h2><span class='messageHeader'> Stations with Limited Access " + "<br></span></h2>");
 
     console.log( "start address: " + startAddress + " end address: " + endAddress );
 

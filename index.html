@@ -7,6 +7,7 @@
     <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
     <script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
     <script src="jquery.geocomplete.min.js"></script>
+     <script src="//code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
 
     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="assets/main.css">
@@ -22,15 +23,21 @@
     </script>
 </head>
 <body>
-  <header id = "searchRoute">
-        <input id="startAddress" type="text" value="" placeholder="Enter start address"/>
+ 
+    <div id = "info">
+    <h2>Wheelchair Accessible </br> Google Maps</h2>
+    <p>
+The web app shows whether a wheelchaired transit rider can actually make a trip planned through Google Maps. In Philadelphia, all buses are wheel chair accessible. The Market-Frankford El and the Broad Street Subway stops are not fully wheel chair accessible. When transit riders in wheelchairs use Google Maps to plan transit trips, there's no way of knowing through Google Maps if the stations they use will be accessible to wheelchairs. The data is out there, but wheelchair accessible data is in one location, and elevators that are installed but not currently working. </br></br>
+<a href = "http://www.unlockphilly.com/">Visit Unlock Philly for more information.</a></p>
+    </div>
+
+    <div id = "searchRoute">
+	   <input id="startAddress" type="text" value="" placeholder="Enter start address"/>
         <input id="endAddress" type="text" value="" placeholder="Enter end address"/>
         <input type="submit" name="submit" onClick="return getDirections();"/>
-    </header>
+    </div>
 
     <div id='map-canvas'></div>
-    <div id='messages' onclick = "stationToggle()"> 
-        <span class='messageHeader'> Stations with Limited Access </span>
-    </div>
+
 </body>
 </html>
