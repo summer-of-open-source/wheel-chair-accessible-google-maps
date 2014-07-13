@@ -16,9 +16,13 @@ if( typeof QueryString == 'undefined' ) {
         will set the value of the input to the parameter supplied
         in the url that has the same string as the input id
     **/
-    jQuery.fn.set_input_value = function(parameterName) {
+    jQuery.fn.set_input_value = function() {
         var input = $(this[0]) // It's your element
-        input.val( decodeURIComponent( QueryString[input.attr('id')] ) );
+        var uriVal = QueryString[input.attr('id')];
+
+        if( uriVal != '' ) {
+            input.val( decodeURIComponent( uriVal ) );
+        }
     };
 }
 
