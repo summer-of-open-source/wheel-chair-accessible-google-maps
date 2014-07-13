@@ -6,6 +6,51 @@ var outages;
 var railStations;
 var showStations= true;
 
+/**
+    given a variable number of arguments, checking only input types, returns
+    true if they all have non empty values, else returns false
+**/
+function all_values_exist() {
+  for (var i = 0; i < arguments.length; i++) {
+    input = arguments[i];
+    if( input.val() == '' ) {
+      return false;
+    }
+  }
+  return true;
+}
+
+// Usage:
+//   var data = { 'first name': 'George', 'last name': 'Jetson', 'age': 110 };
+//   var querystring = EncodeQueryData(data);
+// 
+function EncodeQueryData(data)
+{
+   var ret = [];
+   for (var d in data)
+      ret.push(escape(d) + "=" + escape(data[d]));
+   return ret.join("&");
+}
+
+/**
+    use History.js to update the browser history when new addresses are entered
+    into the search form
+**/
+function updateHistory() {
+    History = window.History;
+    History.init();
+
+    queryData = [];
+    for (var i = 0; i < arguments.length; i++) {
+        inputName = arguments[i];
+        input = $(inputName);
+        id = input.attr('id');
+        val = input.val();
+        queryData[id] = val;
+    }
+    encodedQueryData = EncodeQueryData(queryData);
+    History.pushState( null, null,"?" + encodedQueryData );
+}
 
 function getrailStations() {
 
@@ -221,9 +266,9 @@ MyResponse.prototype.getSeptaStation = function( stopName, lineShortName ) {
     if( foundStation === null ) {
 
         msg = 'unable to find station in rail lines with name "' + stopName + '" shortName: ' + lineShortName;
-        console.log( msg );
+        //console.log( msg );
         $.each( railStations.stations, function( index, station ) {
-            console.log( stopName + " " + station.stop_name );
+            //console.log( stopName + " " + station.stop_name );
         } );
     }
 
