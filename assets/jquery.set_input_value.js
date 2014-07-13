@@ -21,7 +21,6 @@ if( typeof QueryString == 'undefined' ) {
 
         var uriVal = QueryString[input.attr('id')];
 
-        console.log( uriVal );
         if( uriVal != '' && typeof uriVal != 'undefined' ) {
             input.val( decodeURIComponent( uriVal ) );
         }
