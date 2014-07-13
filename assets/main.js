@@ -1,4 +1,7 @@
 var map;
+var xmarkers = [];
+var redxUrl = 'assets/redx.png';
+
 directionsService = new google.maps.DirectionsService();
 directionsDisplay = new google.maps.DirectionsRenderer();
 
@@ -65,8 +68,8 @@ function getOutages() {
     $.getJSON(url, function(json) {
         outages = json;
     }).success( function() {
-        console.debug("successfully retreived elevator outages");
-        console.debug("there are " + outages.length + " elevator outages");
+        console.info("retreived elevator outages from unlockphilly.com; "+
+            "there are currently" + outages.length + " outages");
     }).error( function() {
         console.warn("unable to retreive station outages from url:");
         console.warn(url);
@@ -101,6 +104,9 @@ MyResponse.prototype.getWheelchairRoute = function( waypoints ) {
     
     self = this;
 
+    // clear any red x markers that could be on the map
+    self.removeAllXMarkers();
+
     var legs = this.response.routes[0].legs;
 
     transitStops = [];
@@ -115,11 +121,8 @@ MyResponse.prototype.getWheelchairRoute = function( waypoints ) {
             if( step.travel_mode == 'TRANSIT' ) {
                 vehicleType = step.transit.line.vehicle.type;
 
-                console.log( 'outside vehicle type: ' + vehicleType );
                 if( vehicleType != 'BUS' && vehicleType != 'TRAM' ) { // is not a bus stop
-                    console.log( step.transit.line.short_name );
                     lineShortName = step.transit.line.short_name;
-                    
 
                     //console.log( 'inside vehicle type: ' + vehicleType + ' short line name ' + lineShortName );
                     //console.log( step.transit.line );
@@ -128,9 +131,6 @@ MyResponse.prototype.getWheelchairRoute = function( waypoints ) {
 
                     departStatus = self.getElevatorStatus( departStopName, lineShortName );
                     arriveStatus = self.getElevatorStatus( arriveStopName, lineShortName );
-
-                    console.log( 'departure stop ' + departStopName + "status: " + StopStatus.toString( departStatus ) );
-                    console.log( 'arriaval stop ' + arriveStopName + " status: " + StopStatus.toString( arriveStatus ) );
 
                     if( departStatus != StopStatus.ELEVATOR_WORKING && departStatus != null) {
 
@@ -177,20 +177,26 @@ MyResponse.prototype.getClosestStation = function(lat,lng) {
     });
 }
 
+MyResponse.prototype.removeAllXMarkers = function() {
+    for (i = 0; i < xmarkers.length; i++) { 
+        xmarkers[i].setMap(null);
+    }
+    xmarkers = new Array();
+}
+
 MyResponse.prototype.addXMarker = function(lng,lat) {
     var image = {
-        url: 'assets/redx.png',
+        url: redxUrl,
     };
 
     var marker = new google.maps.Marker({
           position: new google.maps.LatLng( lng, lat ),
           anchor: new google.maps.Point(0, 1000),
-          map: map,
           icon: image,
           zIndex: 10000
     });
-
-    return marker;
+    marker.setMap(map);
+    xmarkers.push(marker);
 }
 
 MyResponse.prototype.getElevatorStatus = function( stopName, lineShortName ) {
@@ -301,6 +307,7 @@ function stationToggle() {
 }
 
 function getDirections() {
+    console.debug("getting directions process started");
 
     var startAddress = $('#startAddress').val();
     var endAddress = $('#endAddress').val();
@@ -320,10 +327,11 @@ function getDirections() {
     directionsService.route(request, function(response, status) {
         if (status == google.maps.DirectionsStatus.OK) {
 
+
             directionsDisplay.setMap(null);
 
             myRes = new MyResponse( response );
-     
+            myRes.removeAllXMarkers();
             directionsDisplay = new google.maps.DirectionsRenderer();
             directionsDisplay.setMap(map);
 
