@@ -19,8 +19,10 @@ if( typeof QueryString == 'undefined' ) {
     jQuery.fn.set_input_value = function() {
         var input = $(this[0]) // It's your element
 
-        if( input.val() != '' ) {
-            input.val( decodeURIComponent( QueryString[input.attr('id')] ) );
+        var uriVal = QueryString[input.attr('id')];
+
+        if( uriVal != '' ) {
+            input.val( decodeURIComponent( uriVal ) );
         }
     };
 }
