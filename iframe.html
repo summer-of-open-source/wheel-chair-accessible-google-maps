@@ -3,10 +3,11 @@
 <html>
 <head>
   <title>Wheel Chair Accessible Transit Demo</title>
- 
+
      <!--<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&amp;libraries=places"></script>-->
      <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places"></script>
     <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
     <script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
 
@@ -46,14 +47,14 @@
     </script>
 </head>
 <body>
-  <header id = "searchRoute">
+  <div class = "intro draggable">
         <input id="startAddress" type="text" value="" placeholder="Enter start address"/>
         <input id="endAddress" type="text" value="" placeholder="Enter end address"/>
         <input type="submit" name="submit" onClick="updateHistory(startAddress,endAddress); return getDirections();"/>
-    </header>
+    </div>
 
     <div id='map-canvas'></div>
-    <div id='messages' onclick = "stationToggle()"> 
+    <div id='messages' onclick = "stationToggle()">
         <span class='messageHeader'> Stations with Limited Access </span>
     </div>
 </body>
