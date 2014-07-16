@@ -57,10 +57,12 @@ function updateHistory() {
 
 function fetchSeptaStations(callback) {
 
+    console.log("fetching rail stations");
     $.getJSON("rail_lines.json", function(json) {
         septaStationCollection = new SeptaStationCollection(json);
         
     }).success( function() {
+        console.log("rail stations fetched");
         if( callback != null ) {
             callback();
         }
@@ -70,10 +72,18 @@ function fetchSeptaStations(callback) {
 };
 
 function fetchElevatorOutages(callback) {
-    url = "http://www.corsproxy.com/www.unlockphilly.com/septa/elevator/outages";
+    url = "http://www.corsproxy.com/www3.septa.org/hackathon/elevator/";
+    console.log( 'fetching elevator outages' );
     $.getJSON(url, function(json) {
-        elevatorOutages = json;
-    }).success( function() {
+        // @TODO when there's a valid elevator outage, debug setting up
+        // septa's elevator outage data
+        elevatorOutages = [];
+
+    }).success( function(json) {
+        console.log( json );
+        $.each( json.results, function(index, value) {
+            console.log( value );
+        });
         console.info("retreived elevator outages from unlockphilly.com; "+
             "there are currently " + elevatorOutages.length + " outages");
         if( callback != null ) {
