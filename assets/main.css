@@ -13,7 +13,7 @@ h1 {font-family: 'Open Sans', sans-serif; font-size: 1em;}
 
 .intro a {color: #027073;}
 
-.searchRoute {border-radius: 0 0 5px 5px;}
+.searchRoute {border-radius: 0 0 5px 5px; max-width: 400px;}
 
 .searchRoute input {margin: 5px;}
 
