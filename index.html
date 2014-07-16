@@ -3,10 +3,11 @@
 <html>
 <head>
   <title>Wheel Chair Accessible Transit Demo</title>
- 
+
 	 <!--<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&amp;libraries=places"></script>-->
 	 <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places"></script>
 	<script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
 	<script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
 
@@ -45,20 +46,30 @@
 	</script>
 </head>
 <body>
-	<div class="intro">
+	<div class="intro draggable ui-widget-content">
 		<h1>Prototype Google Maps Wheelchair Accessible Transit Route Checker</h1>
 		<p>Best viewed on desktop/tablet. When given valid from/to points the app suggests whether Google route planner supplies an accessible or inaccessible route. Started at the <a href='https://twitter.com/search?q=%23hack4access&src=typd'>#Hack4Access</a> hackathon by <a href='https://twitter.com/jimRsmiley'>@jimRsmiley</a> and continued by Girl Develop It Philly's Summer of Open Source fellows Sally Kong, LeeAnn Kinney and Erin O'Brien. Please leave feedback and comments below.</p>
+		<div class="searchRoute">
+			<input id="startAddress" type="text" value="" placeholder="Enter start address"/>
+			<input id="endAddress" type="text" value="" placeholder="Enter end address"/>
+			<input type="submit" name="submit" onClick="updateHistory(startAddress,endAddress); return getDirections();"/>
+		</div>
 	</div>
 
-	<div class="searchRoute">
+	<!-- <div class="searchRoute">
 	<input id="startAddress" type="text" value="" placeholder="Enter start address"/>
 		<input id="endAddress" type="text" value="" placeholder="Enter end address"/>
 		<input type="submit" name="submit" onClick="updateHistory(startAddress,endAddress); return getDirections();"/>
-	</div>
+	</div> -->
 	<div id='map-canvas'></div>
-	<div class='messages' onclick = "stationToggle()"> 
+	<div class='messages' onclick = "stationToggle()">
 		<span class='messageHeader'> Stations with Limited Access </span>
 	</div>
+	<script>
+		$(function() {
+			$(".draggable").draggable();
+		});
+	</script>
 </body>
 
 <script>
