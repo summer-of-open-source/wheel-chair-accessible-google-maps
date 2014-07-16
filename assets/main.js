@@ -390,6 +390,17 @@ MyResponse.prototype.removeAllXMarkers = function() {
 }
 
 MyResponse.prototype.addXMarker = function(lng,lat) {
+    var iconImage = {
+        url: 'redx.png',
+        size: new google.maps.Size(20, 32),
+        origin: new google.maps.Point(0,0), 
+        anchor: new google.maps.Point(75, 35)
+    };
+
+    var marker = new google.maps.Marker({
+        icon: image,  
+        map: map
+    });
     var image = {
         url: redxUrl,
     };
