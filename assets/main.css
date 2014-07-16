@@ -5,9 +5,11 @@ html body {
 
 body {font-family: 'Open Sans', sans-serif; font-size: 16px/.75em; }
 
-.intro, .draggable, .iframe-search {padding: 1em 1em 0 1em; background: rgba(255, 255, 255, 0.8); color: #111; float: left; width: 35%; border-radius: 5px 5px 0  0; margin: 5% 0 0 10%; z-index: 1000; position: absolute; cursor: pointer;}
+.intro, .draggable, .iframe-search {background: rgba(255, 255, 255, 0.8); color: #111; float: left; border-radius: 5px; margin: 5% 0 0 10%; z-index: 1000; position: absolute; cursor: pointer;}
 
-.iframe-search {width: 20%;}
+.intro, .draggable {padding: 1em 1em 0 1em; width: 35%; }
+
+.iframe-search {width: 74%; padding: 1em;}
 
 h1 {font-family: 'Open Sans', sans-serif; font-size: 1em;}
 
