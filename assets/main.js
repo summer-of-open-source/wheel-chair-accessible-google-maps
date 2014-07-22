@@ -57,7 +57,7 @@ function updateHistory() {
 function fetchSeptaStations(callback) {
 
     console.log("fetching rail stations");
-    $.getJSON("rail_lines.json", function(json) {
+    $.getJSON("assets/rail_lines.json", function(json) {
         septaStationCollection = new SeptaStationCollection(json);
 
     }).success(function() {
