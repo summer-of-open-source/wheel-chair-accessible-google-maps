@@ -13,11 +13,11 @@ h1 {font-family: 'Open Sans', sans-serif; font-size: 1em;}
 
 .intro a {color: #027073;}
 
-.searchRoute {border-radius: 0 0 5px 5px;}
+.searchRoute {border-radius: 0 0 5px 5px;  max-width: 500px; }
 
 .searchRoute input {margin: 5px;}
 
-.messages {background: rgba(255, 255, 255, 0.8); color: #111; width: 30%; margin: 1em; padding: 1em; text-align: center; position: fixed; bottom: 0; right: 0; }
+#messages {background: rgba(255, 255, 255, 0.8); color: #111; width: 30%; margin: 1em; padding: 1em; text-align: center; position: fixed; bottom: 0; right: 0; }
 
 input[type=text] {background-color: #f2f2f2; color: #2c2c2c; height: 2.2em; padding: 5px; width: 100%; max-width: 300px; border: 1px solid #888; margin: 0.5em 0; }
 
@@ -29,9 +29,9 @@ input[type=submit]:hover {background-color: #66cccc; text-decoration: underline;
 
 span .messageHeader {color: #fefefe !important; }
 
-.messages{cursor: pointer; overflow-y: scroll; }
+#messages{cursor: pointer; overflow-y: scroll; }
 
-.messages p {background:rgba(233, 60, 79,0.8); padding: 0.3em; color: #fefefe; }
+#messages p {background:rgba(233, 60, 79,0.8); padding: 0.3em; color: #fefefe; }
 
 @media screen and (max-width:600px){
     .intro {width: 90%; float: none; margin:0;}
