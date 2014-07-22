@@ -5,6 +5,7 @@ directionsDisplay = new google.maps.DirectionsRenderer();
 var outages;
 var railStations;
 var showStations= true;
+var markers = [];
 
 
 function getrailStations() {
@@ -53,6 +54,7 @@ MyResponse.prototype.getWheelchairRoute = function( waypoints ) {
     var legs = this.response.routes[0].legs;
 
     transitStops = [];
+    clearMarkers(); 
 
     $.each( legs, function(index, leg ) {
         
@@ -138,8 +140,14 @@ MyResponse.prototype.addXMarker = function(lng,lat) {
           icon: image,
           zIndex: 10000
     });
-
+    markers.push(marker);
     return marker;
+}
+
+function clearMarkers() {
+    for (var i = 0; i < markers.length; i++) {
+    markers[i].setMap(null);
+  }
 }
 
 MyResponse.prototype.getElevatorStatus = function( stopName, lineShortName ) {
