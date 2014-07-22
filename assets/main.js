@@ -7,32 +7,31 @@ directionsDisplay = new google.maps.DirectionsRenderer();
 
 var elevatorOutages;
 var septaStationCollection;
-var showStations= true;
+var showStations = true;
 
 /**
     given a variable number of arguments, checking only input types, returns
     true if they all have non empty values, else returns false
 **/
 function all_values_exist() {
-  for (var i = 0; i < arguments.length; i++) {
-    input = arguments[i];
-    if( input.val() == '' ) {
-      return false;
+    for (var i = 0; i < arguments.length; i++) {
+        input = arguments[i];
+        if (input.val() == '') {
+            return false;
+        }
     }
-  }
-  return true;
+    return true;
 }
 
 // Usage:
 //   var data = { 'first name': 'George', 'last name': 'Jetson', 'age': 110 };
 //   var querystring = EncodeQueryData(data);
-// 
-function EncodeQueryData(data)
-{
-   var ret = [];
-   for (var d in data)
-      ret.push(encodeURI(d) + "=" + encodeURI(data[d]));
-   return ret.join("&");
+//
+function EncodeQueryData(data) {
+    var ret = [];
+    for (var d in data)
+        ret.push(encodeURI(d) + "=" + encodeURI(data[d]));
+    return ret.join("&");
 }
 
 /**
@@ -52,7 +51,7 @@ function updateHistory() {
         queryData[id] = val;
     }
     encodedQueryData = EncodeQueryData(queryData);
-    History.pushState( null, null,"?" + encodedQueryData );
+    History.pushState(null, null, "?" + encodedQueryData);
 }
 
 function fetchSeptaStations(callback) {
@@ -60,36 +59,36 @@ function fetchSeptaStations(callback) {
     console.log("fetching rail stations");
     $.getJSON("rail_lines.json", function(json) {
         septaStationCollection = new SeptaStationCollection(json);
-        
-    }).success( function() {
+
+    }).success(function() {
         console.log("rail stations fetched");
-        if( callback != null ) {
+        if (callback != null) {
             callback();
         }
-    }).error( function() {
+    }).error(function() {
         console.error('was unable to get rail stations');
     });
 };
 
 function fetchElevatorOutages(callback) {
     url = "http://www.corsproxy.com/www3.septa.org/hackathon/elevator/";
-    console.log( 'fetching elevator outages' );
+    console.log('fetching elevator outages');
     $.getJSON(url, function(json) {
         // @TODO when there's a valid elevator outage, debug setting up
         // septa's elevator outage data
         elevatorOutages = [];
 
-    }).success( function(json) {
-        console.log( json );
-        $.each( json.results, function(index, value) {
-            console.log( value );
+    }).success(function(json) {
+        console.log(json);
+        $.each(json.results, function(index, value) {
+            console.log(value);
         });
-        console.info("retreived elevator outages from unlockphilly.com; "+
+        console.info("retreived elevator outages from unlockphilly.com; " +
             "there are currently " + elevatorOutages.length + " outages");
-        if( callback != null ) {
+        if (callback != null) {
             callback();
         }
-    }).error( function() {
+    }).error(function() {
         console.warn("unable to retreive station outages from url:");
         console.warn(url);
         outages = [];
@@ -102,15 +101,15 @@ var GLeg = function(obj) {
 
 GLeg.prototype.getSteps = function() {
     var steps = Array();
-    for( i = 0; i < this.obj.steps.length; i++ ) {
-        steps.push( new GStep(this.obj.steps[i]) );
+    for (i = 0; i < this.obj.steps.length; i++) {
+        steps.push(new GStep(this.obj.steps[i]));
     }
     return steps;
 }
 
 /**
-*    a step along the journey
-**/
+ *    a step along the journey
+ **/
 var GStep = function(obj) {
     this.obj = obj;
     this.departureStop = null;
@@ -123,7 +122,7 @@ GStep.prototype.getRoute = function() {
 
 GStep.prototype.getDepartureStop = function() {
 
-    if( this.departureStop == null ) {
+    if (this.departureStop == null) {
         this.departureStop = new GStop(this.obj.transit.departure_stop);
     }
     return this.departureStop;
@@ -131,7 +130,7 @@ GStep.prototype.getDepartureStop = function() {
 
 GStep.prototype.getArrivalStop = function() {
 
-    if( this.arrivalStop == null ) {
+    if (this.arrivalStop == null) {
         this.arrivalStop = new GStop(this.obj.transit.arrival_stop);
     }
     return this.arrivalStop;
@@ -171,84 +170,84 @@ GStop.prototype.getLng = function() {
 
 var SeptaStationCollection = function(obj) {
     this.stations = new Array();
-    for( i = 0; i < obj.stations.length; i++ ) {
-        this.stations.push( new SeptaStation(obj.stations[i]));
+    for (i = 0; i < obj.stations.length; i++) {
+        this.stations.push(new SeptaStation(obj.stations[i]));
     }
     console.log('we have ' + this.stations.length + ' stations in collection');
 }
 
 SeptaStationCollection.prototype.setElevatorOutages = function(elevatorOutages) {
     self = this;
-    $.each( elevatorOutages, function(index, outage) {
-        station = self.getStation( outage.stop_name );
-        station.setElevatorOutage( outage );
-    } );
+    $.each(elevatorOutages, function(index, outage) {
+        station = self.getStation(outage.stop_name);
+        station.setElevatorOutage(outage);
+    });
 }
 
 SeptaStationCollection.prototype.getStationById = function(id) {
     self = this;
 
     foundStation = null;
-    $.each( this.stations, function( index, station ) {
+    $.each(this.stations, function(index, station) {
 
-        console.log( station.getId() + " " + id );
+        console.log(station.getId() + " " + id);
         // if the stop names and short names match, break out of the each
-        if( station.getId() == id ) {
+        if (station.getId() == id) {
             foundStation = station;
             return;
-        } 
-    } ); // each this.stations
+        }
+    }); // each this.stations
 
     /**
         if we didn't find it, let's print some debug messages
     **/
-    if( foundStation === null ) {
+    if (foundStation === null) {
 
-        $.each( this.stations, function( index, station ) {
-            console.log( "id:'" + id + 
-                    "' station-id:'" + station.getId() + "'");
-        } );
+        $.each(this.stations, function(index, station) {
+            console.log("id:'" + id +
+                "' station-id:'" + station.getId() + "'");
+        });
     }
 
     return foundStation;
 }
 
-SeptaStationCollection.prototype.getStation = function(stopName,routeName) {
+SeptaStationCollection.prototype.getStation = function(stopName, routeName) {
     self = this;
 
     // strip the stop name of the route name at the end
-    if( stopName.substring(stopName.length - 6) == ' - MFL' ) {
-        stopName = stopName.substring(0,stopName.length - 6);
-    }else if( stopName.substring(stopName.length - 6) == ' - BSL' ) {
-        stopName = stopName.substring(0,stopName.length - 6);
+    if (stopName.substring(stopName.length - 6) == ' - MFL') {
+        stopName = stopName.substring(0, stopName.length - 6);
+    } else if (stopName.substring(stopName.length - 6) == ' - BSL') {
+        stopName = stopName.substring(0, stopName.length - 6);
     }
 
     foundStation = null;
-    $.each( this.stations, function( index, station ) {
+    $.each(this.stations, function(index, station) {
 
         // if the stop names and short names match, break out of the each
-        if( stopName.toLowerCase().trim() == station.getName().toLowerCase().trim() ) {
-            foundStation = station;
-            return;
-        } 
-
-        // there are special cases
-        else if( stopName == 'Arrott Transportation Center' && 
-            station.getName() == 'Margaret & Orthodox Station' ) {
+        if (stopName.toLowerCase().trim() == station.getName().toLowerCase().trim()) {
             foundStation = station;
             return;
         }
-    } ); // each this.stations
+
+        // there are special cases
+        else if (stopName == 'Arrott Transportation Center' &&
+            station.getName() == 'Margaret & Orthodox Station') {
+            foundStation = station;
+            return;
+        }
+    }); // each this.stations
 
     /**
         if we didn't find it, let's print some debug messages
     **/
-    if( foundStation === null ) {
+    if (foundStation === null) {
 
-        $.each( this.stations, function( index, station ) {
-            console.log( "test-stop-name:'" + stopName + 
-                    "' septa-name:'" + station.getName() + "'");
-        } );
+        $.each(this.stations, function(index, station) {
+            console.log("test-stop-name:'" + stopName +
+                "' septa-name:'" + station.getName() + "'");
+        });
     }
 
     return foundStation;
@@ -272,24 +271,21 @@ SeptaStation.prototype.getId = function() {
 }
 
 SeptaStation.prototype.getRoute = function() {
-    if( this.obj.MFL == 1 ) {
+    if (this.obj.MFL == 1) {
         return "MFL";
-    }
-    else if( this.obj.BSS == 1 ) {
+    } else if (this.obj.BSS == 1) {
         return "BSS";
-    }
-    else if( this.obj.PATCO == 1 ) {
+    } else if (this.obj.PATCO == 1) {
         return "PATCO";
     }
 
     // Norristown High Speed Line
-    else if( this.obj.NHSL == 1 ) {
+    else if (this.obj.NHSL == 1) {
         return "NHSL";
-    }
-    else {
-        console.error("was unable to get route from the "+
+    } else {
+        console.error("was unable to get route from the " +
             "following septa stations");
-        console.error( this.obj );
+        console.error(this.obj);
     }
 }
 
@@ -302,17 +298,15 @@ SeptaStation.prototype.hasElevator = function() {
 }
 
 StopStatus = {
-    NO_ELEVATOR : 0,
-    ELEVATOR_WORKING : 1,
-    ELEVATOR_NOT_WORKING : 2,
-    toString: function( status ) {
-        if( status === StopStatus.NO_ELEVATOR ) {
+    NO_ELEVATOR: 0,
+    ELEVATOR_WORKING: 1,
+    ELEVATOR_NOT_WORKING: 2,
+    toString: function(status) {
+        if (status === StopStatus.NO_ELEVATOR) {
             return "no elevator";
-        }
-        else if( status === StopStatus.ELEVATOR_WORKING ) {
+        } else if (status === StopStatus.ELEVATOR_WORKING) {
             return "elevator working";
-        }
-        else if( status === StopStatus.ELEVATOR_NOT_WORKING ) {
+        } else if (status === StopStatus.ELEVATOR_NOT_WORKING) {
             return "elevator not working";
         }
 
@@ -322,12 +316,11 @@ StopStatus = {
 
 SeptaStation.prototype.getElevatorStatus = function() {
 
-    if( this.hasElevator() ) {
+    if (this.hasElevator()) {
 
-        if( !this.isElevatorWorking() ) {
+        if (!this.isElevatorWorking()) {
             return StopStatus.ELEVATOR_NOT_WORKING;
-        }
-        else {
+        } else {
             return StopStatus.ELEVATOR_WORKING;
         }
 
@@ -337,24 +330,23 @@ SeptaStation.prototype.getElevatorStatus = function() {
     }
 }
 
-function MyResponse( response,septaStationCollection,elevatorOutages ) {
+function MyResponse(response, septaStationCollection, elevatorOutages) {
     this.response = response;
     this.septaStationCollection = septaStationCollection;
     this.septaStationCollection.setElevatorOutages(elevatorOutages);
 }
 
-MyResponse.prototype.getWheelchairRoute = function( waypoints ) {
+MyResponse.prototype.getWheelchairRoute = function(waypoints) {
 
     // can't use self, something wrong with scope here
     self_response = this;
 
-    $.each( this.response.routes[0].legs, function(index, leg ) {
+    $.each(this.response.routes[0].legs, function(index, leg) {
         var leg = new GLeg(leg);
 
-        $.each( leg.getSteps(), function( index, step ) {
+        $.each(leg.getSteps(), function(index, step) {
 
-            if( step.getTravelMode() == 'TRANSIT' 
-                && step.getVehicleType() == 'SUBWAY' ) {
+            if (step.getTravelMode() == 'TRANSIT' && step.getVehicleType() == 'SUBWAY') {
 
                 departStop = step.getDepartureStop();
                 arriveStop = step.getArrivalStop();
@@ -364,69 +356,52 @@ MyResponse.prototype.getWheelchairRoute = function( waypoints ) {
                 arriveStop.getName();
 
                 departingStation = self_response.septaStationCollection.getStation(
-                                        departStop.getName(),step.getRoute() );
+                    departStop.getName(), step.getRoute());
 
                 arrivingStation = self_response.septaStationCollection.getStation(
-                                        arriveStop.getName(),step.getRoute() );
+                    arriveStop.getName(), step.getRoute());
 
-                if( departingStation.getElevatorStatus() 
-                                    != StopStatus.ELEVATOR_WORKING ) {
+                if (departingStation.getElevatorStatus() != StopStatus.ELEVATOR_WORKING) {
 
-                    console.log( 'self follows' );
-                    console.log( self_response );
-                    self_response.addXMarker(departStop.getLat(),departStop.getLng());
+                    console.log('self follows');
+                    console.log(self_response);
+                    self_response.addXMarker(departStop.getLat(), departStop.getLng());
 
-                    $('#messages').append('<p id = "bad">' + departStop.getName() + '<br/> ' 
-                        + StopStatus.toString( departingStation.getElevatorStatus() ) + '</p>');
+                    $('#messages').append('<p id = "bad">' + departStop.getName() + '<br/> ' + StopStatus.toString(departingStation.getElevatorStatus()) + '</p>');
                 }
 
-                if( arrivingStation.getElevatorStatus() 
-                                    != StopStatus.ELEVATOR_WORKING ) {
-                    self_response.addXMarker( arriveStop.getLat(),arriveStop.getLng());
+                if (arrivingStation.getElevatorStatus() != StopStatus.ELEVATOR_WORKING) {
+                    self_response.addXMarker(arriveStop.getLat(), arriveStop.getLng());
 
-                    $('#messages').append ('<p id= "bad">' +  arriveStop.getName() + '<br/> '
-                        + StopStatus.toString( arrivingStation.getElevatorStatus() ) + '</p>');
+                    $('#messages').append('<p id= "bad">' + arriveStop.getName() + '<br/> ' + StopStatus.toString(arrivingStation.getElevatorStatus()) + '</p>');
                 }
             } // if TRANSIT AND SUBWAY
         }); // each leg.getSteps
-    } ); // each leg in route
+    }); // each leg in route
 }
 
 MyResponse.prototype.removeAllXMarkers = function() {
-    for (i = 0; i < xmarkers.length; i++) { 
+    for (i = 0; i < xmarkers.length; i++) {
         xmarkers[i].setMap(null);
     }
     xmarkers = new Array();
 }
 
-MyResponse.prototype.addXMarker = function(lng,lat) {
-    var iconImage = {
-        url: 'redx.png',
-        size: new google.maps.Size(20, 32),
-        origin: new google.maps.Point(0,0), 
-        anchor: new google.maps.Point(75, 35)
-    };
-
+MyResponse.prototype.addXMarker = function(lng, lat) {
     var marker = new google.maps.Marker({
-        icon: image,  
-        map: map
+        position: new google.maps.LatLng(lng, lat),
+        map: map,
+        icon: {
+            url: 'assets/redx.png',
+            size: new google.maps.Size(30, 30),
+            anchor: new google.maps.Point(15, 15),
+            zIndex: 10000
+        }
     });
-    var image = {
-        url: redxUrl,
-    };
-
-    var marker = new google.maps.Marker({
-          position: new google.maps.LatLng( lng, lat ),
-          anchor: new google.maps.Point(0, 1000),
-          icon: image,
-          zIndex: 10000
-    });
-    marker.setMap(map);
-    xmarkers.push(marker);
 }
 
 function loadMap() {
-    var philadelphia = new google.maps.LatLng(39.9523400,-75.1637900);
+    var philadelphia = new google.maps.LatLng(39.9523400, -75.1637900);
     var mapOptions = {
         zoom: 10,
         center: philadelphia
@@ -437,11 +412,11 @@ function loadMap() {
 function stationToggle() {
     showStations = !showStations;
 
-     if(showStations) {
-       $("#messages").css("height", "");
-     } else {
+    if (showStations) {
+        $("#messages").css("height", "");
+    } else {
         $("#messages").css("height", "1.5em");
-     }
+    }
 }
 
 function getDirections() {
@@ -464,20 +439,20 @@ function getDirections() {
 
             directionsDisplay.setMap(null);
 
-            if( septaStationCollection == null ) {
+            if (septaStationCollection == null) {
 
-                fetchElevatorOutages( callback = function() {
+                fetchElevatorOutages(callback = function() {
 
-                    fetchSeptaStations( callback = function() {
+                    fetchSeptaStations(callback = function() {
 
-                        myRes = new MyResponse( response, 
+                        myRes = new MyResponse(response,
                             septaStationCollection,
-                            elevatorOutages );
+                            elevatorOutages);
                         myRes.removeAllXMarkers();
                         directionsDisplay = new google.maps.DirectionsRenderer();
                         directionsDisplay.setMap(map);
                         myRes.getWheelchairRoute();
-                        directionsDisplay.setDirections( myRes.response );
+                        directionsDisplay.setDirections(myRes.response);
 
                     }); // fetchElevatorOutages
 
@@ -485,19 +460,18 @@ function getDirections() {
 
             } // if septaStationCollection == null
             else {
-                myRes = new MyResponse( response, 
+                myRes = new MyResponse(response,
                     septaStationCollection,
-                    elevatorOutages );
+                    elevatorOutages);
                 myRes.removeAllXMarkers();
                 directionsDisplay = new google.maps.DirectionsRenderer();
                 directionsDisplay.setMap(map);
                 myRes.getWheelchairRoute();
-                directionsDisplay.setDirections( myRes.response );
+                directionsDisplay.setDirections(myRes.response);
             }
-        }
-        else {
-            console.error( 'request failed with ' + status );
-            console.error( response );
+        } else {
+            console.error('request failed with ' + status);
+            console.error(response);
         }
     });
 }
