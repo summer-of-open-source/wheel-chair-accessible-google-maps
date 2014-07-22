@@ -48,9 +48,11 @@
 </head>
 <body>
   <div class = "iframe-search draggable">
+  	<label for="startAddress" class="hidden">start address</label>
         <input id="startAddress" type="text" value="" placeholder="Enter start address"/>
+        <label for="endAddress" class="hidden">end address</label>
         <input id="endAddress" type="text" value="" placeholder="Enter end address"/>
-        <input type="submit" name="submit" onClick="updateHistory(startAddress,endAddress); return getDirections();"/>
+        <input type="submit" name="submit" value="submit" onClick="updateHistory(startAddress,endAddress); return getDirections();"/>
     </div>
 
     <div id='map-canvas'></div>
