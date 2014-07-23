@@ -1,26 +1,50 @@
-<!DOCTYPE html><!--HTML5 doctype-->
-<html>
-<head>
-  <title>Unlock Philly</title>
- 
-     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&amp;libraries=places"></script>
-    <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
-    <script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
-    <script src="jquery.geocomplete.min.js"></script>
-     <script src="//code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
 
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="assets/main.css">
-    <script src = "assets/main.js"></script>
-    <script>
-        $(document).ready( function() {
-            getrailStations();
-            getOutages();
-            loadMap();
-        $("#startAddress").geocomplete();
-        $("#endAddress").geocomplete();
-        });
-    </script>
+<!DOCTYPE html><!--HTML5 doctype-->
+<html lang="en">
+<head>
+  <title>Wheel Chair Accessible Transit Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	 <!--<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&amp;libraries=places"></script>-->
+	 <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places"></script>
+	<script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+	<script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+
+	<script src="assets/QueryString.js"></script>
+	<script src="assets/jquery.geocomplete.min.js"></script>
+	<script src="assets/jquery.set_input_value.js"></script>
+	<script src="assets/jquery.history.js"></script>
+	<script src="assets/main.js"></script>
+
+
+	<link rel="stylesheet" href="assets/main.css">
+
+	<script>
+		$(document).ready( function() {
+			loadMap();
+
+			var startInput = $("#startAddress");
+			var endInput   = $("#endAddress");
+
+			// attach jquery google address complete wrapper
+			startInput.geocomplete();
+			endInput.geocomplete();
+
+			// attach any directions to the inputs
+			// to use add to url: ?STARTINPUTNAME=ADDRESS1&ENDINPUTNAME=ADDRESS2
+			startInput.set_input_value();
+			endInput.set_input_value();
+
+			// if address values already exist, retreive and display the route
+			if( all_values_exist(startInput,endInput) ) {
+			  // get the directions already supplied in the url
+			  console.log('values exist on page load, retreiving directions');
+			  return getDirections();
+			}
+		});
+	</script>
 </head>
 <body>
  
@@ -30,13 +54,25 @@
 <br><br><a href = "http://www.unlockphilly.com/">Visit Unlock Philly for more information.</a></p>
     </div>
 
-    <div id = "searchRoute">
-	   <input id="startAddress" type="text" value="" placeholder="Enter start address"/>
-        <input id="endAddress" type="text" value="" placeholder="Enter end address"/>
-        <input type="submit" name="submit" onClick="return getDirections();"/>
-    </div>
+    <div class = "draggable" id = "searchRoute">
+	   <input id="startAddress" type="text" value="" placeholder="start address"/>
+        <input id="endAddress" type="text" value="" placeholder="end address"/>
+        <input type="submit" name="submit" onClick="return getDirections();
+   updateHistory(startAddress,endAddress);"/>
+</div>
 
     <div id='map-canvas'></div>
 
 </body>
+
+<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	ga('create', 'UA-1943290-12', 'jimsmiley.us');
+	ga('send', 'pageview');
+
+</script>
 </html>

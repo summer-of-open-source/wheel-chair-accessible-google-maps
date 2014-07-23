@@ -4,6 +4,7 @@ body {
 
 @media (min-width:900px){
     #info {
+        font-family: "Open Sans"
         text-align: center;
         padding: 1em;
 	    margin-bottom: 0em;
@@ -33,7 +34,10 @@ body {
         z-index: -1; 
     }
 }
+.hidden {position: absolute; top: -9999px; left: -9999px;}
 
+
+/***For resized windows in laptop screen ***/
 @media (max-width:899px){
      #info {
         color: #028B8F;
@@ -42,7 +46,15 @@ body {
         top: 1.5em;
     }
 
-     #searchRoute {
+    .intro, .draggable, .iframe-search {
+        background: rgba(255, 255, 255, 0.8); 
+        color: #111; 
+        z-index: 1000; 
+        position: absolute; 
+        cursor: pointer;
+    }
+
+    #searchRoute {
         padding: 0.5em;
         width: 100%;
         margin-top: -1em;
@@ -50,22 +62,53 @@ body {
         text-align: center;
     }
 
-    
     #map-canvas {
         margin: 0;
         width: 100%;
-       height: 30em;
-       bottom: 0;   
+        height: 30em;
+        bottom: 0;   
         z-index: -1; 
     }
 }
 
-#info > span {
-    background: rgba(0,0,0,0.8);
-    padding: 0.5em;
-    color: #fefefe !important;
-    font-family: "Open Sans";
+/***For Mobile Devices***/
+@media only screen 
+and (min-device-width : 320px) 
+and (max-device-width : 480px) {
+    #info {
+        color: #028B8F;
+        text-align: center;
+        padding: 1.5em;
+        top: 1.5em;
+    }
+
+    .intro, .draggable, .iframe-search {
+        background: rgba(255, 255, 255, 0.8); 
+        color: #111; 
+        z-index: 1000; 
+        position: absolute; 
+        cursor: pointer;
+    }
+
+    #searchRoute {
+        padding: 0.5em;
+        width: 100%;
+        margin-top: -1em;
+        margin-bottom: 1em;
+        text-align: center;
+    }
+
+    #map-canvas {
+        margin: 0;
+        width: 100%;
+        height: 30em;
+        bottom: 0;   
+        z-index: -1; 
+    }
+
 }
+
+.iframe-search {width: 74%; padding: 0.3em .5em 0 .5em;}
 
 input[type=text]
 {
@@ -98,10 +141,29 @@ input:focus {
     outline: none;
 }
 
+@media screen and (max-width: 535px) {
+    #map-canvas{
+        top: 4%;
+    }
+}
+
+@media screen and (max-width: 400px){
+    #map-canvas {top: 41%;}
+}
+
+/***For the Station List Header "Stations with No Access" ***/
+#info > span {
+    background: rgba(0,0,0,0.8);
+    padding: 0.5em;
+    color: #fefefe !important;
+    font-family: "Open Sans";
+}
+
 #info > p  {
     font-family: "Open Sans";
+    font-size: 1em;
 	color: #3e3e3e;
-    line-height: 1.2em;
+    line-height: 1.4em;
     margin: 0;
     padding: 1em;
     padding-top: 0em;
@@ -118,6 +180,7 @@ input:focus {
 
 #info > h2 {
     font-family: "Open Sans";
+    text-align: center;
     color: #027073;
     margin-top: 0.5em;
     line-height: 1.2em;

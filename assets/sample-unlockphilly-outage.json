@@ -1,0 +1,13 @@
+[
+    {
+        _id: {
+        stationId: "428",
+        outageStart: "2014-07-13 19:00:52 UTC"
+        },
+        duration: 61,
+        isActive: true,
+        outageEnd: null,
+        stop_name: "2nd St Station ",
+        line_code: "MFL"
+    }
+]

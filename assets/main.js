@@ -1,45 +1,317 @@
 var map;
+var xmarkers = [];
+var redxUrl = 'assets/redx.png';
+
 directionsService = new google.maps.DirectionsService();
 directionsDisplay = new google.maps.DirectionsRenderer();
 
-var outages;
-var railStations;
-var showStations= true;
-var markers = [];
+var elevatorOutages;
+var septaStationCollection;
+var showStations = true;
 
+//onload
+jQuery(document).ready(function(){ 
+    $(".draggable").draggable();
+});
 
-function getrailStations() {
+/**
+    given a variable number of arguments, checking only input types, returns
+    true if they all have non empty values, else returns false
+**/
+function all_values_exist() {
+    for (var i = 0; i < arguments.length; i++) {
+        input = arguments[i];
+        if (input.val() == '') {
+            return false;
+        }
+    }
+    return true;
+}
 
-    console.log( 'getting rail lines' );
-    $.getJSON("rail_lines.json", function(json) {
-        railStations = json;
+// Usage:
+//   var data = { 'first name': 'George', 'last name': 'Jetson', 'age': 110 };
+//   var querystring = EncodeQueryData(data);
+//
+function EncodeQueryData(data) {
+    var ret = [];
+    for (var d in data)
+        ret.push(encodeURI(d) + "=" + encodeURI(data[d]));
+    return ret.join("&");
+}
+
+/**
+    use History.js to update the browser history when new addresses are entered
+    into the search form
+**/
+function updateHistory() {
+    History = window.History;
+    History.init();
+
+    queryData = [];
+    for (var i = 0; i < arguments.length; i++) {
+        inputName = arguments[i];
+        input = $(inputName);
+        id = input.attr('id');
+        val = input.val();
+        queryData[id] = val;
+    }
+    encodedQueryData = EncodeQueryData(queryData);
+    History.pushState(null, null, "?" + encodedQueryData);
+}
+
+function fetchSeptaStations(callback) {
+
+    console.log("fetching rail stations");
+    $.getJSON("assets/rail_lines.json", function(json) {
+        septaStationCollection = new SeptaStationCollection(json);
+
+    }).success(function() {
+        console.log("rail stations fetched");
+        if (callback != null) {
+            callback();
+        }
+    }).error(function() {
+        console.error('was unable to get rail stations');
     });
 };
 
-function getOutages() {
-    console.log( 'getting outages' );
+function fetchElevatorOutages(callback) {
+    url = "http://www.corsproxy.com/www3.septa.org/hackathon/elevator/";
+    console.log('fetching elevator outages');
+    $.getJSON(url, function(json) {
+        // @TODO when there's a valid elevator outage, debug setting up
+        // septa's elevator outage data
+        elevatorOutages = [];
 
-    $.getJSON("outages.json", function(json) {
-         outages = json;
+    }).success(function(json) {
+        console.log(json);
+        $.each(json.results, function(index, value) {
+            console.log(value);
+        });
+        console.info("retreived elevator outages from unlockphilly.com; " +
+            "there are currently " + elevatorOutages.length + " outages");
+        if (callback != null) {
+            callback();
+        }
+    }).error(function() {
+        console.warn("unable to retreive station outages from url:");
+        console.warn(url);
+        outages = [];
     });
 };
 
-function MyResponse( response ) {
-    this.response = response;
+var GLeg = function(obj) {
+    this.obj = obj;
+}
+
+GLeg.prototype.getSteps = function() {
+    var steps = Array();
+    for (i = 0; i < this.obj.steps.length; i++) {
+        steps.push(new GStep(this.obj.steps[i]));
+    }
+    return steps;
+}
+
+/**
+ *    a step along the journey
+ **/
+var GStep = function(obj) {
+    this.obj = obj;
+    this.departureStop = null;
+    this.arrivalStop = null;
+}
+
+GStep.prototype.getRoute = function() {
+    this.obj.transit.short_name;
+}
+
+GStep.prototype.getDepartureStop = function() {
+
+    if (this.departureStop == null) {
+        this.departureStop = new GStop(this.obj.transit.departure_stop);
+    }
+    return this.departureStop;
+}
+
+GStep.prototype.getArrivalStop = function() {
+
+    if (this.arrivalStop == null) {
+        this.arrivalStop = new GStop(this.obj.transit.arrival_stop);
+    }
+    return this.arrivalStop;
+}
+
+GStep.prototype.getInstructions = function() {
+    return this.obj.instructions;
+}
+
+GStep.prototype.getTravelMode = function() {
+    return this.obj.travel_mode;
+}
+
+GStep.prototype.getVehicleType = function() {
+    return this.obj.transit.line.vehicle.type;
+}
+
+/**
+    this class wraps a Google transit station json object
+**/
+
+var GStop = function(json) {
+    this.json = json;
+}
+
+GStop.prototype.getName = function() {
+    return this.json.name;
+}
+
+GStop.prototype.getLat = function() {
+    return this.json.location.lat();
+}
+
+GStop.prototype.getLng = function() {
+    return this.json.location.lng();
+}
+
+var SeptaStationCollection = function(obj) {
+    this.stations = new Array();
+    for (i = 0; i < obj.stations.length; i++) {
+        this.stations.push(new SeptaStation(obj.stations[i]));
+    }
+    console.log('we have ' + this.stations.length + ' stations in collection');
+}
+
+SeptaStationCollection.prototype.setElevatorOutages = function(elevatorOutages) {
+    self = this;
+    $.each(elevatorOutages, function(index, outage) {
+        station = self.getStation(outage.stop_name);
+        station.setElevatorOutage(outage);
+    });
+}
+
+SeptaStationCollection.prototype.getStationById = function(id) {
+    self = this;
+
+    foundStation = null;
+    $.each(this.stations, function(index, station) {
+
+        console.log(station.getId() + " " + id);
+        // if the stop names and short names match, break out of the each
+        if (station.getId() == id) {
+            foundStation = station;
+            return;
+        }
+    }); // each this.stations
+
+    /**
+        if we didn't find it, let's print some debug messages
+    **/
+    if (foundStation === null) {
+
+        $.each(this.stations, function(index, station) {
+            console.log("id:'" + id +
+                "' station-id:'" + station.getId() + "'");
+        });
+    }
+
+    return foundStation;
+}
+
+SeptaStationCollection.prototype.getStation = function(stopName, routeName) {
+    self = this;
+
+    // strip the stop name of the route name at the end
+    if (stopName.substring(stopName.length - 6) == ' - MFL') {
+        stopName = stopName.substring(0, stopName.length - 6);
+    } else if (stopName.substring(stopName.length - 6) == ' - BSL') {
+        stopName = stopName.substring(0, stopName.length - 6);
+    }
+
+    foundStation = null;
+    $.each(this.stations, function(index, station) {
+
+        // if the stop names and short names match, break out of the each
+        if (stopName.toLowerCase().trim() == station.getName().toLowerCase().trim()) {
+            foundStation = station;
+            return;
+        }
+
+        // there are special cases
+        else if (stopName == 'Arrott Transportation Center' &&
+            station.getName() == 'Margaret & Orthodox Station') {
+            foundStation = station;
+            return;
+        }
+    }); // each this.stations
+
+    /**
+        if we didn't find it, let's print some debug messages
+    **/
+    if (foundStation === null) {
+
+        $.each(this.stations, function(index, station) {
+            console.log("test-stop-name:'" + stopName +
+                "' septa-name:'" + station.getName() + "'");
+        });
+    }
+
+    return foundStation;
+}
+
+var SeptaStation = function(obj) {
+    this.obj = obj;
+    this.outage = null;
+}
+
+SeptaStation.prototype.setElevatorOutage = function(outage) {
+    this.outage = outage;
+}
+
+SeptaStation.prototype.getName = function() {
+    return this.obj.stop_name;
+}
+
+SeptaStation.prototype.getId = function() {
+    return this.obj._id;
+}
+
+SeptaStation.prototype.getRoute = function() {
+    if (this.obj.MFL == 1) {
+        return "MFL";
+    } else if (this.obj.BSS == 1) {
+        return "BSS";
+    } else if (this.obj.PATCO == 1) {
+        return "PATCO";
+    }
+
+    // Norristown High Speed Line
+    else if (this.obj.NHSL == 1) {
+        return "NHSL";
+    } else {
+        console.error("was unable to get route from the " +
+            "following septa stations");
+        console.error(this.obj);
+    }
+}
+
+SeptaStation.prototype.isElevatorWorking = function() {
+    return this.outage == null;
+}
+
+SeptaStation.prototype.hasElevator = function() {
+    return this.obj.wheelchair_boarding == 1;
 }
 
 StopStatus = {
-    NO_ELEVATOR : 0,
-    ELEVATOR_WORKING : 1,
-    ELEVATOR_NOT_WORKING : 2,
-    toString: function( status ) {
-        if( status === StopStatus.NO_ELEVATOR ) {
+    NO_ELEVATOR: 0,
+    ELEVATOR_WORKING: 1,
+    ELEVATOR_NOT_WORKING: 2,
+    toString: function(status) {
+        if (status === StopStatus.NO_ELEVATOR) {
             return "no elevator";
-        }
-        else if( status === StopStatus.ELEVATOR_WORKING ) {
+        } else if (status === StopStatus.ELEVATOR_WORKING) {
             return "elevator working";
-        }
-        else if( status === StopStatus.ELEVATOR_NOT_WORKING ) {
+        } else if (status === StopStatus.ELEVATOR_NOT_WORKING) {
             return "elevator not working";
         }
 
@@ -47,228 +319,123 @@ StopStatus = {
     }
 };
 
-MyResponse.prototype.getWheelchairRoute = function( waypoints ) {
-    
-    self = this;
+SeptaStation.prototype.getElevatorStatus = function() {
 
-    var legs = this.response.routes[0].legs;
+    if (this.hasElevator() && this != null) {
 
-    transitStops = [];
-    clearMarkers(); 
-
-    $.each( legs, function(index, leg ) {
-        
-        $.each( leg.steps, function( index, step ) {
-            var instructions = step.instructions;
-           
-            //console.log( 'step: ' + instructions + " transit_detail follows" );
-
-            if( step.travel_mode == 'TRANSIT' ) {
-                vehicleType = step.transit.line.vehicle.type;
-
-                console.log( 'outside vehicle type: ' + vehicleType );
-                if( vehicleType != 'BUS' && vehicleType != 'TRAM' ) { // is not a bus stop
-                    console.log( step.transit.line.short_name );
-                    lineShortName = step.transit.line.short_name;
-                    
-
-                    //console.log( 'inside vehicle type: ' + vehicleType + ' short line name ' + lineShortName );
-                    //console.log( step.transit.line );
-                    departStopName = step.transit.departure_stop.name;
-                    arriveStopName = step.transit.arrival_stop.name;
-
-                    departStatus = self.getElevatorStatus( departStopName, lineShortName );
-                    arriveStatus = self.getElevatorStatus( arriveStopName, lineShortName );
-
-                    console.log( 'departure stop ' + departStopName + "status: " + StopStatus.toString( departStatus ) );
-                    console.log( 'arriaval stop ' + arriveStopName + " status: " + StopStatus.toString( arriveStatus ) );
-
-                    if( departStatus != StopStatus.ELEVATOR_WORKING && departStatus != null) {
-
-                        departureStop = step.transit.departure_stop;
-                        lat = departureStop.location.lat();
-                        lng = departureStop.location.lng();
-                        self.addXMarker(lat,lng);
-
-                        $('#info').append('<p id = "bad">' + departStopName + '<br/> ' 
-                            + StopStatus.toString( departStatus ) + '</p>');
-                        
-                        self.getClosestStation( lat, lng );
-                    }
-
-                    if( arriveStatus != StopStatus.ELEVATOR_WORKING && arriveStatus != null) {
-
-                        arrivalStop = step.transit.arrival_stop;
-                        lat = arrivalStop.location.lat();
-                        lng = arrivalStop.location.lng();
-                        self.addXMarker( lat,lng );
-
-                        $('#info').append ('<p id= "bad">' +  arriveStopName + '<br/> '
-                         + StopStatus.toString( arriveStatus ) + '</p>');
-
-                        self.getClosestStation( lat, lng );
-                    }
-                }
-            }
-            else {
-                //console.log( 'step follows' );
-                //console.log( step.instructions );
-            }
-        });
-        
-    } );
-}
-
-MyResponse.prototype.getClosestStation = function(lat,lng) {
-
-    var url = "http://www3.septa.org/hackathon/locations/get_locations.php?lon="+lng+"&lat="+lat+"&radius=3&jsoncallback=?"
-    $.getJSON(url,function(result) {
-        console.log( 'result of getClosestStation' );
-        console.log( result );
-    });
-}
-
-MyResponse.prototype.addXMarker = function(lng,lat) {
-    var image = {
-        url: 'redx.png',
-    };
-
-    var marker = new google.maps.Marker({
-          position: new google.maps.LatLng( lng, lat ),
-          anchor: new google.maps.Point(0, 1000),
-          map: map,
-          icon: image,
-          zIndex: 10000
-    });
-    markers.push(marker);
-    return marker;
-}
-
-function clearMarkers() {
-    for (var i = 0; i < markers.length; i++) {
-    markers[i].setMap(null);
-  }
-}
-
-MyResponse.prototype.getElevatorStatus = function( stopName, lineShortName ) {
-    self = this;
-
-    stationObj = this.getSeptaStation( stopName, lineShortName );
-
-    if( this.hasElevator( stationObj ) ) {
-
-        if( self.isStationOnOutageList( stationObj ) ) {
+        if (!this.isElevatorWorking()) {
             return StopStatus.ELEVATOR_NOT_WORKING;
-        }
-        else {
+        } else {
             return StopStatus.ELEVATOR_WORKING;
         }
 
-    } else {
+    } // this.hasElevator
+    else {
         return StopStatus.NO_ELEVATOR;
     }
 }
 
-// return whether the given station object has an elevator
-MyResponse.prototype.hasElevator = function( stationObj ) {
+function MyResponse(response, septaStationCollection, elevatorOutages) {
+    this.response = response;
+    this.septaStationCollection = septaStationCollection;
+    this.septaStationCollection.setElevatorOutages(elevatorOutages);
+}
 
-    if(stationObj != null) {
-        if( stationObj.wheelchair_boarding != null ) {
-            return true; 
+MyResponse.prototype.getWheelchairRoute = function(waypoints) {
+
+    // can't use self, something wrong with scope here
+    self_response = this;
+    clearMarkers();
+
+    $.each(this.response.routes[0].legs, function(index, leg) {
+        var leg = new GLeg(leg);
+
+        $.each(leg.getSteps(), function(index, step) {
+
+            if (step.getTravelMode() == 'TRANSIT' && step.getVehicleType() == 'SUBWAY') {
+
+                departStop = step.getDepartureStop();
+                arriveStop = step.getArrivalStop();
+
+                departStop.getName();
+                step.getRoute();
+                arriveStop.getName();
+
+                departingStation = self_response.septaStationCollection.getStation(
+                    departStop.getName(), step.getRoute());
+
+                arrivingStation = self_response.septaStationCollection.getStation(
+                    arriveStop.getName(), step.getRoute());
+
+                if(departingStation != null && arrivingStation != null) {
+
+                    if (departingStation != nulldepartingStation.getElevatorStatus() != StopStatus.ELEVATOR_WORKING) {
+
+                        console.log('self follows');
+                        console.log(self_response);
+                        self_response.addXMarker(departStop.getLat(), departStop.getLng());
+
+                        $('#info').append('<p id = "bad">' + departStop.getName() + '<br/> ' + StopStatus.toString(departingStation.getElevatorStatus()) + '</p>');
+                    }
+
+                    if (arrivingStation.getElevatorStatus() != StopStatus.ELEVATOR_WORKING) {
+                        self_response.addXMarker(arriveStop.getLat(), arriveStop.getLng());
+
+                        $('#info').append('<p id= "bad">' + arriveStop.getName() + '<br/> ' + StopStatus.toString(arrivingStation.getElevatorStatus()) + '</p>');
+                    }
+                }
+            } // if TRANSIT AND SUBWAY
+        }); // each leg.getSteps
+    }); // each leg in route
+}
+
+
+function clearMarkers() {
+    for (var i = 0; i < xmarkers.length; i++) {
+    xmarkers[i].setMap(null);
+  }
+}
+
+MyResponse.prototype.addXMarker = function(lng, lat) {
+    var marker = new google.maps.Marker({
+        position: new google.maps.LatLng(lng, lat),
+        map: map,
+        icon: {
+            url: 'assets/redx.png',
+            size: new google.maps.Size(30, 30),
+            anchor: new google.maps.Point(15, 15),
+            zIndex: 10000
         }
-    }
-
-    return false;
-}
-
-MyResponse.prototype.isStationOnOutageList = function( stationObj ) {
-
-    var onList = false;
-    $.each( outages, function(index, outage) {
-        console.log( 'in isStationOnOutageList stationObj:' );
-        console.log( stationObj.stop_name );
-        if( stationObj.stop_name == outage.stop_name ) {
-            onList = true;
-        }
-        return; //break
-    } );
-
-    return onList;
-}
-
-MyResponse.prototype.getGoogleStationLineShortName = function( station ) {
-    if( station.MFL == 1 ) {
-        return "MFL";
-    }
-    else if( station.BSS == 1 ) {
-        return "BSS";
-    }
-    console.log( "could not determine the short name for the following station" );
-    console.log( station );
-}
-// get the station from railStations json issued by septa
-MyResponse.prototype.getSeptaStation = function( stopName, lineShortName ) {
-    self = this;
-    foundStation = null;
-
-    $.each( railStations.stations, function( index, station ) {
-
-        if( stopName.toLowerCase() == station.stop_name.toLowerCase() 
-            && lineShortName == self.getGoogleStationLineShortName( station ) ) {
-                foundStation = station;
-                return;
-        }
-    } );
-
-    if( foundStation === null ) {
-
-        msg = 'unable to find station in rail lines with name "' + stopName + '" shortName: ' + lineShortName;
-        console.log( msg );
-        $.each( railStations.stations, function( index, station ) {
-            console.log( stopName + " " + station.stop_name );
-        } );
-    }
-
-    return foundStation;
-}
-
-// return whether the station has a working elevator
-MyResponse.prototype.isElevatorWorking = function( station ) {
-    return station.wheelchair_boarding !== null;
+    });
+    xmarkers.push(marker);
 }
 
 function loadMap() {
-    var philadelphia = new google.maps.LatLng(39.9523400,-75.1637900);
+    var philadelphia = new google.maps.LatLng(39.9523400, -75.1637900);
     var mapOptions = {
         zoom: 10,
-        center: philadelphia,
-        disableDefaultUI: true
+        center: philadelphia
     };
     map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 }
 
 function stationToggle() {
-    console.log("toggle");
     showStations = !showStations;
 
-    /* if(showStations) {
-       $("#messages").css("height", "");
-     } else {
+    if (showStations) {
+        $("#messages").css("height", "");
+    } else {
         $("#messages").css("height", "1.5em");
-     }*/
+    }
 }
 
 function getDirections() {
 
     var startAddress = $('#startAddress').val();
     var endAddress = $('#endAddress').val();
-    //$('html, body').animate({scrollTop:$(document).height()}, 'slow');
 
     $("#info").empty();
-    $("#info").append("<h2><span class='messageHeader'> Stations with Limited Access " + "<br></span></h2>");
-
-    console.log( "start address: " + startAddress + " end address: " + endAddress );
-
+   $("#info").append("<h2><span class='messageHeader'> Stations with Limited Access " + "<br></span></h2>");
     request = {
         origin: startAddress,
         destination: endAddress,
@@ -281,18 +448,37 @@ function getDirections() {
 
             directionsDisplay.setMap(null);
 
-            myRes = new MyResponse( response );
-     
-            directionsDisplay = new google.maps.DirectionsRenderer();
-            directionsDisplay.setMap(map);
+            if (septaStationCollection == null) {
 
-            myRes.getWheelchairRoute();
+                fetchElevatorOutages(callback = function() {
 
-            directionsDisplay.setDirections( myRes.response );
-        }
-        else {
-            console.log( 'request failed with ' + status );
-            console.log( response );
+                    fetchSeptaStations(callback = function() {
+
+                        myRes = new MyResponse(response,
+                            septaStationCollection,
+                            elevatorOutages);
+                        directionsDisplay = new google.maps.DirectionsRenderer();
+                        directionsDisplay.setMap(map);
+                        myRes.getWheelchairRoute();
+                        directionsDisplay.setDirections(myRes.response);
+
+                    }); // fetchElevatorOutages
+
+                }); // fetchSeptaStatons
+
+            } // if septaStationCollection == null
+            else {
+                myRes = new MyResponse(response,
+                    septaStationCollection,
+                    elevatorOutages);
+                directionsDisplay = new google.maps.DirectionsRenderer();
+                directionsDisplay.setMap(map);
+                myRes.getWheelchairRoute();
+                directionsDisplay.setDirections(myRes.response);
+            }
+        } else {
+            console.error('request failed with ' + status);
+            console.error(response);
         }
     });
 }
