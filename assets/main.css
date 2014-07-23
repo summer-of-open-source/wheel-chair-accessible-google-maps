@@ -38,16 +38,16 @@ input[type=submit]:hover {background-color: #66cccc; text-decoration: underline;
 #messages p {background:rgba(233, 60, 79,0.8); padding: 0.3em; color: #fefefe; }
 
 @media screen and (max-width:600px){
-    .intro {width: 90%; float: none; margin:0;}
+    .intro {width: 90%; float: none; margin:0; position: relative;}
 
-    #map-canvas {top: 30%;}
+    #map-canvas {position: relative; height: 400px;}
 
     .searchRoute {width: 100%; margin: 0; padding: 0;}
 
     .searchRoute input {display: inline; width: 150px;}
 }
 
-@media screen and (max-width: 535px) {#map-canvas{top: 40%;}}
+@media screen and (max-width: 535px) {#map-canvas{top: 4%;}}
 
 @media screen and (max-width: 400px){
     #map-canvas {top: 41%;}
