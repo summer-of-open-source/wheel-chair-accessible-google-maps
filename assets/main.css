@@ -27,7 +27,7 @@ h1 {font-family: 'Open Sans', sans-serif; font-size: 1em;}
 
 input[type=text] {background-color: #f2f2f2; color: #2c2c2c; height: 2.2em; padding: 5px; width: 100%; max-width: 300px; border: 1px solid #888; margin: 0.5em 0; }
 
-input[type=submit] {background-color: #027073; color: #fefefe; height: 3.2em; font-weight: 700; width: 250px; border: none; margin: 0.5em 0 1em 0; padding: 5px; text-transform: uppercase; cursor: pointer;}
+input[type=submit] {background-color: #027073; color: #fefefe; height: 3.2em; font-weight: 700; width: 100%; max-width: 225px; border: none; margin: 0.5em 0 1em 0; padding: 5px; text-transform: uppercase; cursor: pointer;}
 
 input[type=submit]:hover {background-color: #66cccc; text-decoration: underline; }
 
@@ -40,11 +40,17 @@ input[type=submit]:hover {background-color: #66cccc; text-decoration: underline;
 @media screen and (max-width:600px){
     .intro {width: 90%; float: none; margin:0; position: relative;}
 
-    #map-canvas {position: relative; height: 400px;}
+    input[type=text] {width: 33%;}
+
+    input[type=submit] {width: 20%;}
+
+    #map-canvas {position: relative; height: 600px;}
 
     .searchRoute {width: 100%; margin: 0; padding: 0;}
 
-    .searchRoute input {display: inline; width: 150px;}
+    .searchRoute input {display: inline; /*width: 150px;*/}
+
+    #messages {width: 85%;}
 }
 
 @media screen and (max-width: 535px) {#map-canvas{top: 4%;}}
