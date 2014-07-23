@@ -369,7 +369,7 @@ MyResponse.prototype.getWheelchairRoute = function(waypoints) {
 
                 if(departingStation != null && arrivingStation != null) {
 
-                    if (departingStation != nulldepartingStation.getElevatorStatus() != StopStatus.ELEVATOR_WORKING) {
+                    if (departingStation != departingStation.getElevatorStatus() != StopStatus.ELEVATOR_WORKING) {
 
                         console.log('self follows');
                         console.log(self_response);
