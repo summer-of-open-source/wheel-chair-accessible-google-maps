@@ -346,6 +346,7 @@ MyResponse.prototype.getWheelchairRoute = function(waypoints) {
     // can't use self, something wrong with scope here
     self_response = this;
     clearMarkers();
+    var cnt = 0;
 
     $.each(this.response.routes[0].legs, function(index, leg) {
         var leg = new GLeg(leg);
@@ -374,6 +375,7 @@ MyResponse.prototype.getWheelchairRoute = function(waypoints) {
                         console.log('self follows');
                         console.log(self_response);
                         self_response.addXMarker(departStop.getLat(), departStop.getLng());
+                        cnt ++;
 
                         $('#info').append('<p id = "bad">' + departStop.getName() + '<br/> ' + StopStatus.toString(departingStation.getElevatorStatus()) + '</p>');
                     }
@@ -381,12 +383,16 @@ MyResponse.prototype.getWheelchairRoute = function(waypoints) {
                     if (arrivingStation.getElevatorStatus() != StopStatus.ELEVATOR_WORKING) {
                         self_response.addXMarker(arriveStop.getLat(), arriveStop.getLng());
 
+                        cnt ++;
                         $('#info').append('<p id= "bad">' + arriveStop.getName() + '<br/> ' + StopStatus.toString(arrivingStation.getElevatorStatus()) + '</p>');
                     }
                 }
             } // if TRANSIT AND SUBWAY
         }); // each leg.getSteps
     }); // each leg in route
+    if(cnt == 0) {
+        $('#info').append('<p> None!</p>');
+    }
 }
 
 
