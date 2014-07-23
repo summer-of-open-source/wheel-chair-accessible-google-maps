@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+    <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <script src="assets/sidebyside.js"></script>
+    <script src="assets/sidebyside.js"></script>
+
+    <link rel="stylesheet" href="assets/main.css">
+
+    <script>
+    $(document).ready( function() {
+
+    var urlObj = new OTUrl();
+    urlObj.setFromPlace("(40.02185, -75.08988)");
+    urlObj.setToPlace("(39.95083, -75.15052)");
+    urlObj.setDate("07-22-2014");
+    urlObj.setTime("4:07pm");
+
+    url = urlObj.url();
+    
+    console.debug(_"api url follows" );
+    console.debug(url);    
+    
+    $.get(url,function(response) { 
+            var response = new OTResponse(response);
+
+            duration = response.getDuration();
+
+            populateDiv('div1',response);
+
+            urlObj.setWheelchair('true');
+            url = urlObj.url();
+
+            $.get(url,function(response) { 
+                var nextResponse = new OTResponse(response);
+
+                populateDiv('div2',response);
+                nextDuration = nextResponse.getDuration();
+
+                console.log( "first trip duraton: " + (duration/60) 
+                    + " minutes next trip duraton: " + (nextDuration/60) 
+                    + " minutes" );
+            });
+
+        });
+
+    });
+
+    function populateDiv(divId,response) {
+        console.log( response );
+        $(divId).html(response);
+    };
+
+    </script>
+    
+</head>
+<body>
+    <div>
+        hello in side_by_side.html
+    </div>
+    <div class="sbs_container" id="div1">
+        <header>No Wheelchair</header>
+        <div>
+            Do this do that
+        </div>
+    </div>
+    <div class="sbs_container" id="div2">
+        <header>Wheelchair Needed</header>
+        <div>
+            if you're in a wheelchair, you'll do this
+        </div>
+    </div>
+</body>
+</html>

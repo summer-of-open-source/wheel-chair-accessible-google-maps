@@ -110,3 +110,14 @@ input[type=submit]:hover
 input:focus {
     outline: none;
 }
+
+/**
+*    the side by side demo
+**/
+.sbs_container {
+    position: relative;
+    float: left;
+    width: 400px;
+    padding: 20px;
+    border: 1px solid;
+}
