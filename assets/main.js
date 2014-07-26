@@ -341,6 +341,8 @@ MyResponse.prototype.getWheelchairRoute = function(waypoints) {
     // can't use self, something wrong with scope here
     self_response = this;
 
+    self_response.removeAllXMarkers();
+
     $.each(this.response.routes[0].legs, function(index, leg) {
         var leg = new GLeg(leg);
 
@@ -381,6 +383,7 @@ MyResponse.prototype.getWheelchairRoute = function(waypoints) {
 }
 
 MyResponse.prototype.removeAllXMarkers = function() {
+    console.debug('removeAllXMarkers');
     for (i = 0; i < xmarkers.length; i++) {
         xmarkers[i].setMap(null);
     }
@@ -398,6 +401,8 @@ MyResponse.prototype.addXMarker = function(lng, lat) {
             zIndex: 10000
         }
     });
+
+    xmarkers.push( marker );
 }
 
 function loadMap() {
