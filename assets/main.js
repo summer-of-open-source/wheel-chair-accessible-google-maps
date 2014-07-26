@@ -1,3 +1,14 @@
+
+/**
+*    a hack to fix History.js when it tried to decode '&' in the Google directions
+*    address
+*
+*    https://github.com/browserstate/history.js/issues/257
+**/
+History.unescapeString = function(param) {
+    return param; 
+};
+
 var map;
 var xmarkers = [];
 var redxUrl = 'assets/redx.png';
