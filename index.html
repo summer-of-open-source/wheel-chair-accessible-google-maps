@@ -51,6 +51,7 @@
 			<h1>Prototype Google Maps Wheelchair Accessible Transit Route Checker</h1>
 			<p>Best viewed on desktop/tablet. When given valid from/to points the app suggests whether Google route planner supplies an accessible or inaccessible route. Started at the <a href='https://twitter.com/search?q=%23hack4access&src=typd'>#Hack4Access</a> hackathon by <a href='https://twitter.com/jimRsmiley'>@jimRsmiley</a> and continued by Girl Develop It Philly's Summer of Open Source fellows Sally Kong, LeeAnn Kinney and Erin O'Brien. Please leave feedback and comments below.</p>
 		</div>
+		<p class="hide-show" data-text-swap="[Show intro]" data-text-original="[Hide intro]">[Hide intro]</p>
 		<div class="searchRoute">
 			<label for="startAddress" class="hidden">start address</label>
 			<input id="startAddress" type="text" value="" placeholder="Enter start address"/>
@@ -65,8 +66,17 @@
 		<span class='messageHeader'> Stations with Limited Access </span>
 	</div>
 	<script>
-		$(function() {
-			$(".draggable").draggable();
+		$(document).ready(function(){
+			$(".hide-show").click(function(){
+				$(".hide").toggle();
+			});
+		});
+		$(".hide-show").on("click", function()
+		{
+			var el = $(this);
+			el.text() == el.data("text-swap")
+			? el.text(el.data("text-original"))
+			: el.text(el.data("text-swap"));
 		});
 	</script>
 </body>
