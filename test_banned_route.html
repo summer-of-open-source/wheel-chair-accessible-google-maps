@@ -1,0 +1,95 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Testing Banned Routes</title>
+
+    <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <script src="assets/sidebyside.js"></script>
+
+    <link rel="stylesheet" href="assets/main.css">
+
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    
+    <script>
+    $(document).ready( function() {
+
+    var urlObj = new OTUrl();
+    urlObj.setFromPlace("40.02771,-75.06267");
+    urlObj.setToPlace("39.95100,-75.15060");
+    urlObj.setDate("07-27-2014");
+    urlObj.setTime("9:30am");
+
+    url = urlObj.getPlanUrl();
+    
+    console.debug( "api url follows" );
+    console.debug(url);
+    
+    $.get(url,function(response) { 
+            var response = new OTResponse(response);
+
+            for( i in response.getItineraries() ) {
+                itin = response.getItineraries()[i];
+                console.log( itin );
+                duration = itin.duration;
+                console.debug( urlObj.getItineraryLink() );
+                $("#sbs_without_messages").append( "<p>Itinerary " + i + " is " + (duration/60) + "</p>"
+                    + "<p>Link: <a href='" + urlObj.getItineraryLink(i) + "'>Itinerary Link</a></p>");
+            }
+
+            /**
+                now let's ban stop 61, Frankford Transportation Center
+            **/
+            urlObj.bannRoute("Septa__MFL:61");
+            url = urlObj.getPlanUrl();
+
+            // banning the FTC stop
+//            url = "http://gatekeeper.poplar.phl.io/api/otp/v1/ws/plan?&fromPlace=40.02551125229785%2C-75.10116577148438&toPlace=39.970805680527725%2C-75.157470703125&time=9%3A13am&date=07-27-2014&mode=TRANSIT%2CWALK&maxWalkDistance=750&arriveBy=false&showIntermediateStops=false&_=1406466797862&format=json&bannedRoutes=SEPTA__MFL:61";
+
+            $.get(url,function(response) { 
+                var nextResponse = new OTResponse(response);
+
+                for( i in nextResponse.getItineraries() ) {
+                    itin = nextResponse.getItineraries()[i];
+                    console.log( itin );
+                    duration = itin.duration;
+                    console.debug( urlObj.getItineraryLink() );
+                    $("#sbs_with_messages").append( "<p>Itinerary " + i + " is " + (duration/60) + "</p>"
+                        + "<p>Link: <a href='" + urlObj.getItineraryLink(i) + "'>Itinerary Link</a></p>");
+                }
+            });
+
+        });
+
+    });
+
+    function populateDiv(divId,response) {
+        $(divId).html( response );
+    };
+
+    </script>
+    
+</head>
+<body>
+    <div class="container">
+        <h1>Testing Banned Routes</h1>
+        <div class="row">
+            <p>Testing whether Open Trip Planner will detour around the MFL stop Frankford Transpansportation Terminal</p>
+        </div>
+        <div class="row">
+            <div class="sbs_container">
+                <h3>Without</h3>
+                <div id="sbs_without_messages">
+                    Do this do that
+                </div>
+            </div>
+            <div class="sbs_container">
+                <h3>With</h3>
+                <div id="sbs_with_messages">
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

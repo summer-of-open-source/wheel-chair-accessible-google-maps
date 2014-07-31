@@ -27,6 +27,19 @@ var OTUrl = function() {
     };
 }
 
+OTUrl.prototype.getPlanUrl = function() {
+    return 'http://gatekeeper.poplar.phl.io/api/otp/v1/ws/plan?&'+this.getParameters();
+}
+
+OTUrl.prototype.getParameters = function() {
+    var str = [];
+    for( var p in this.data ) {
+        str.push( encodeURIComponent(p) + "=" + encodeURIComponent(this.data[p]));
+    }
+
+    return str.join('&');
+}
+
 OTUrl.prototype.setFromPlace = function(fromPlace) {
     this.data['fromPlace'] = decodeURIComponent(fromPlace);
 }
@@ -62,6 +75,15 @@ OTUrl.prototype.url = function() {
     return url;
 }
 
+OTUrl.prototype.bannRoute = function(str) {
+    this.data['bannedRoutes'] = str;
+}
+
+OTUrl.prototype.getItineraryLink = function(itinNum) {
+    return 'http://opentrips.phl.io/otp-leaflet-client/?module=planner&'
+        + this.getParameters() + "&itinIndex=" + itinNum;
+}
+
 var OTResponse = function(json) {
     this.json = json;
 
@@ -73,4 +95,8 @@ var OTResponse = function(json) {
 
 OTResponse.prototype.getDuration = function() {
     return this.json.plan.itineraries[0].duration;
+}
+
+OTResponse.prototype.getItineraries = function() {
+    return this.json.plan.itineraries;
 }
