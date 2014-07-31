@@ -76,7 +76,7 @@ OTUrl.prototype.url = function() {
 }
 
 OTUrl.prototype.bannRoute = function(str) {
-    this.data['bannedRoutes'] = str;
+    this.data['bannedStops'] = "SEPTA_61";
 }
 
 OTUrl.prototype.getItineraryLink = function(itinNum) {

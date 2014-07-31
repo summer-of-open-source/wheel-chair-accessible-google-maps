@@ -40,8 +40,14 @@
 
             /**
                 now let's ban stop 61, Frankford Transportation Center
+
+                MFL's route id is 12514
+
+                if banning via the route id, use SEPTA__12514. If banning via
+                route short name use SEPTA_MFL
+
             **/
-            urlObj.bannRoute("Septa__MFL:61");
+            urlObj.bannRoute("SEPTA_MFL:61");
             url = urlObj.getPlanUrl();
 
             // banning the FTC stop
