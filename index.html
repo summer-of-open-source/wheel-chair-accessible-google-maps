@@ -1,20 +1,22 @@
-
 <!DOCTYPE html><!--HTML5 doctype-->
 <html lang="en">
 <head>
   <title>Wheel Chair Accessible Transit Demo</title>
 
 	 <!--<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&amp;libraries=places"></script>-->
-	 <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.1/angular.min.js"></script>
+	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places"></script>
 	<script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
 	<script src="https://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
 	<script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+		
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
 
 	<script src="assets/QueryString.js"></script>
 	<script src="assets/jquery.geocomplete.min.js"></script>
 	<script src="assets/jquery.set_input_value.js"></script>
 	<script src="assets/jquery.history.js"></script>
+	<script src="assets/controller.js"></script>
 	<script src="assets/main.js"></script>
 
 
@@ -46,11 +48,12 @@
 	</script>
 </head>
 <body>
-	<div class="intro draggable">
-		<div class="hide">
+	<div class="intro draggable" ng-app="showApp" ng-controller="mainController">
+		<div ng-show="hideIntro">
 			<h1>Prototype Google Maps Wheelchair Accessible Transit Route Checker</h1>
-			<p>Best viewed on desktop/tablet. When given valid from/to points the app suggests whether Google route planner supplies an accessible or inaccessible route. Started at the <a href='https://twitter.com/search?q=%23hack4access&src=typd'>#Hack4Access</a> hackathon by <a href='https://twitter.com/jimRsmiley'>@jimRsmiley</a> and continued by Girl Develop It Philly's Summer of Open Source fellows Sally Kong, LeeAnn Kinney and Erin O'Brien. Please leave feedback and comments below.</p>
+			<p>When given valid from/to points the app suggests whether Google route planner supplies an accessible or inaccessible route. Started at the <a href='https://twitter.com/search?q=%23hack4access&src=typd'>#Hack4Access</a> hackathon by <a href='https://twitter.com/jimRsmiley'>@jimRsmiley</a> and continued by Girl Develop It Philly's Summer of Open Source fellows Sally Kong, LeeAnn Kinney and Erin O'Brien.</p>
 		</div>
+		<a class="hide-show" data-text-swap="[hide intro]" data-text-original="[show intro]" href ng-click="hideIntro = !hideIntro" class="intro" ng-class="{active : status}">[show intro]</a>
 		<div class="searchRoute">
 			<label for="startAddress" class="hidden">start address</label>
 			<input id="startAddress" type="text" value="" placeholder="Enter start address"/>
@@ -65,8 +68,13 @@
 		<span class='messageHeader'> Stations with Limited Access </span>
 	</div>
 	<script>
-		$(function() {
-			$(".draggable").draggable();
+
+		$(".hide-show").on("click", function()
+		{
+			var el = $(this);
+			el.text() == el.data("text-swap")
+			? el.text(el.data("text-original"))
+			: el.text(el.data("text-swap"));
 		});
 	</script>
 </body>

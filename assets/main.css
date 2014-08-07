@@ -7,9 +7,9 @@ body {font-family: 'Open Sans', sans-serif; font-size: 16px/.75em; }
 
 .hidden {position: absolute; top: -9999px; left: -9999px;}
 
-.intro, .draggable, .iframe-search {background: rgba(255, 255, 255, 0.8); color: #111; float: left; margin: 5% 0 0 10%; z-index: 1000; position: absolute; cursor: pointer;}
+.intro, .draggable, .iframe-search {background: rgba(255, 255, 255, 0.8); color: #111; right: 0; margin: 5% 1em 0 0; z-index: 1000; position: absolute; cursor: pointer;}
 
-.intro, .draggable {padding: 1em 1em 0 1em; width: 35%; }
+.intro, .draggable {padding: .5em 1em 0 1em; width: 35%; }
 
 .iframe-search {width: 74%; padding: 0.3em .5em 0 .5em;}
 
@@ -17,7 +17,9 @@ h1 {font-family: 'Open Sans', sans-serif; font-size: 1em;}
 
 .intro p {font-size: .90em; line-height: 165%;}
 
-.intro a {color: #027073;}
+.intro a, .hide-show {color: #027073;}
+
+a.hide-show {font-size: .75em; margin: 0; }
 
 .searchRoute {border-radius: 0 0 5px 5px;  max-width: 500px; }
 
@@ -59,6 +61,3 @@ input[type=submit]:hover {background-color: #66cccc; text-decoration: underline;
 @media screen and (max-width: 400px){
     #map-canvas {top: 41%;}
 }
-
-
-
